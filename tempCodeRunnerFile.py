@@ -1,0 +1,1 @@
+asyncio.create_task(tu(msg))
