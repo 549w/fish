@@ -48,3 +48,11 @@ def get_doc_detail(book_id, doc_id): # 获取文档详情
     else:
         print(f'ERROR. Status_code:{resp.status_code}')
         return 0
+
+def search(q, type):
+    resp = requests.get(f'https://nova.yuque.com/api/v2/search?q={q}&type={type}', headers = headers)
+    if resp.status_code == 200:
+        return resp.json()['data']
+    else:
+        print(f'ERROR. Status_code:{resp.status_code}')
+        return 0

@@ -9,7 +9,7 @@ async def confidence(msg):
 	raw_message = msg['raw_message']
 	user_id = msg['user_id']
 	nickname = msg['sender']['nickname']
-	msgTime = msg['raw']['msgTime']
+	msgTime = msg['time']
 	peerName = msg['raw']['peerName']
 
 	with open('.//data//record.json') as f:

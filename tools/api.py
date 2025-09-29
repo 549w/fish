@@ -47,6 +47,7 @@ async def send_private_msg(user_id, message):
 			current_time = int(time.time())
 			msg = evalp(await ws.recv())
 			if "status" in msg.keys():
+				print(msg) # test
 				return msg["data"]["message_id"]
 			elif current_time - start_time > 30:
 				report('获取已发送私聊消息message_id超时')

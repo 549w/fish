@@ -10,6 +10,9 @@ from plugins.mess import mess
 from plugins.reply import reply
 #from plugins.search_anime import search_anime
 from plugins.tu import tu
+from plugins.yuque import yuque
+from plugins.yuque import yuque_private
+from plugins.yuque import update_monitor
 
 from tools.api import get_group_list
 from tools.api import get_login_info
@@ -20,7 +23,7 @@ from tools.report import report
 with open('settings.json') as f:
     settings = json.load(f)
 
-async def main():
+async def deal_msg():
     uri = f"ws://localhost:{settings["port"]}/"
     async with websockets.connect(uri) as ws:
 
@@ -57,9 +60,12 @@ async def main():
             #群功能test
             if msg['post_type'] == 'message' and msg['message_type'] == 'group' and msg['user_id'] != settings['self_id']:
 
+                msg['group_id'] = str(msg['group_id'])
+
                 asyncio.create_task(master_ctrl(msg))
                 asyncio.create_task(reply(msg))
                 asyncio.create_task(tu(msg))
+                asyncio.create_task(yuque(msg))
 
                 if group_functions[str(msg['group_id'])]['quiet'] == 0:
                     asyncio.create_task(confidence(msg))
@@ -78,6 +84,16 @@ async def main():
                     with open('.//data//group_functions.json', 'w') as f:
                         json.dump(group_functions, f)
                     await send_group_msg(msg['group_id'], '已开启活跃模式')
+
+            if msg['post_type'] == 'message' and msg['message_type'] == 'private' and msg['user_id'] != settings['self_id']:
+                asyncio.create_task(yuque_private(msg))
+
+async def main():
+    await asyncio.gather(
+        deal_msg(),
+        update_monitor()
+    )
+
 try:    
     asyncio.run(main())
 except websockets.exceptions.ConnectionClosedError:
